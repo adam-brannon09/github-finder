@@ -1,4 +1,5 @@
-import { createContext, useState } from "react";
+import { createContext, useReducer } from "react";
+import githubReducer from "./GithubReducer";
 
 // Create a context object for GitHub.
 const GithubContext = createContext();
@@ -10,8 +11,12 @@ const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
 // Create a provider component for the GitHub context.
 export const GithubProvider = ({ children }) => {
     // Create state variables for the users and loading state.
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const initialState = {
+        users: [],
+        loading: true,
+    };
+
+    const [state, dispatch] = useReducer(githubReducer, initialState);
 
     // Define a function to fetch users from GitHub.
     const fetchUsers = async () => {
@@ -25,20 +30,24 @@ export const GithubProvider = ({ children }) => {
         // Parse the JSON response.
         const data = await response.json();
 
-        // Update the users state variable with the fetched users.
-        setUsers(data);
-
-        // Set the loading state variable to false.
-        setLoading(false);
-    };
+        dispatch({
+            type: 'GET_USERS',
+            payload: data
+        })
+    }
 
     // Return the provider component, passing in the context data.
     return (
-        <GithubContext.Provider value={{ users, loading, fetchUsers }}>
+        <GithubContext.Provider
+            value={{
+                users: state.users,
+                loading: state.loading,
+                fetchUsers
+            }}>
             {children}
         </GithubContext.Provider>
     );
 };
 
 // Export the context object.
-export default GithubContext;
+export default GithubContext
