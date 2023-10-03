@@ -102,10 +102,12 @@ export const GithubProvider = ({ children }) => {
     return (
         <GithubContext.Provider
             value={{
-                users: state.users,
-                user: state.user,
-                loading: state.loading,
-                repos: state.repos,
+                // users: state.users,
+                // user: state.user,
+                // loading: state.loading,
+                // repos: state.repos,
+                //...state takes all the state(everything above) and passes it as props
+                ...state,
                 searchUsers,
                 clearUsers,
                 getUser,
@@ -117,4 +119,4 @@ export const GithubProvider = ({ children }) => {
 };
 
 // Export the context object.
-export default GithubContext
+export default GithubContext;
